@@ -1,0 +1,242 @@
+<div class="case-laws-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">Case Laws E-Library</h1>
+    <p class="page-subtitle">Comprehensive collection of tax case laws and judgments</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="filters-section">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <input 
+          type="text" 
+          class="search-input"
+          placeholder="Search case laws, titles, keywords..."
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+        >
+        <button 
+          *ngIf="searchTerm" 
+          class="clear-btn" 
+          (click)="clearSearch()" 
+          title="Clear search"
+          aria-label="Clear search"
+        >
+          ✕
+        </button>
+      </div>
+      <button class="search-btn" (click)="onSearch()" [disabled]="loading">
+        <span class="search-icon">🔍</span> Search
+      </button>
+    </div>
+
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label for="category">Category:</label>
+        <select 
+          id="category"
+          class="filter-select"
+          [(ngModel)]="selectedCategory"
+          (change)="onCategoryChange()"
+        >
+          <option *ngFor="let cat of categories" [value]="cat.value">
+            {{ cat.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="taxSection">Tax Section:</label>
+        <select 
+          id="taxSection"
+          class="filter-select"
+          [(ngModel)]="selectedTaxSection"
+          (change)="onTaxSectionChange()"
+        >
+          <option *ngFor="let section of taxSections" [value]="section.value">
+            {{ section.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading case laws...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-btn" (click)="loadCaseLaws()">Retry</button>
+  </div>
+
+  <!-- Results Section -->
+  <div *ngIf="!loading && !error" class="results-section">
+    <!-- Results Info -->
+    <div class="results-info">
+      <p>
+        <span class="count-info">Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ getEndIndex() }} of {{ totalCount }} case laws</span>
+        <span class="page-info">(Page {{ currentPage }} of {{ totalPages }})</span>
+      </p>
+    </div>
+
+    <!-- Case Laws List -->
+    <div class="case-laws-list">
+      <div *ngFor="let caseLaw of caseLaws" class="case-law-card" (click)="viewCaseDetail(caseLaw.tid)">
+        <div class="case-header">
+          <h3 class="case-title">{{ caseLaw.title }}</h3>
+          <div class="case-meta">
+            <span class="case-id">TID: {{ caseLaw.tid }}</span>
+            <span class="case-date">{{ formatDate(caseLaw.publishdate) }}</span>
+          </div>
+        </div>
+
+        <div class="case-details">
+          <div class="case-info-grid">
+            <div class="info-item">
+              <strong>Source:</strong> {{ caseLaw.docsource }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.category">
+              <strong>Category:</strong> {{ caseLaw.category }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.bench">
+              <strong>Bench:</strong> {{ caseLaw.bench }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.taxSection">
+              <strong>Section:</strong> {{ caseLaw.taxSection }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.authorid">
+              <strong>Author ID:</strong> {{ caseLaw.authorid }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.docsize">
+              <strong>Document Size:</strong> {{ caseLaw.docsize }} KB
+            </div>
+            <div class="info-item" *ngIf="caseLaw.doctype !== undefined && caseLaw.doctype !== null">
+              <strong>Document Type:</strong> {{ caseLaw.doctype }}
+            </div>
+            <div class="info-item">
+              <strong>Citations:</strong> {{ caseLaw.numcites }} (Cited by {{ caseLaw.numcitedby }})
+            </div>
+            <div class="info-item" *ngIf="caseLaw.headline">
+              <strong>Headline:</strong> {{ caseLaw.headline }}
+            </div>
+            <div class="info-item" *ngIf="caseLaw.fragment !== undefined">
+              <strong>Fragment:</strong> {{ caseLaw.fragment ? 'Yes' : 'No' }}
+            </div>
+          </div>
+
+          <div class="case-summary" *ngIf="caseLaw.headline">
+            <p>{{ truncateText(caseLaw.headline, 300) }}</p>
+          </div>
+
+          <div class="case-stats">
+            <span class="stat-item">
+              <strong>Citations:</strong> {{ caseLaw.numcites }}
+            </span>
+            <span class="stat-item">
+              <strong>Cited By:</strong> {{ caseLaw.numcitedby }}
+            </span>
+          </div>
+        </div>
+
+        <div class="case-actions">
+          <button class="view-btn">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pagination-container" *ngIf="totalPages > 1" aria-label="Case law pagination">
+      <!-- Previous Button -->
+      <button 
+        class="page-btn prev-btn"
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+        [attr.aria-label]="'Previous page'"
+      >
+        <span aria-hidden="true">&laquo;</span> Prev
+      </button>
+
+      <div class="page-numbers">
+        <!-- First Page -->
+        <button 
+          class="page-number"
+          [class.active]="currentPage === 1"
+          (click)="onPageChange(1)"
+          [attr.aria-current]="currentPage === 1 ? 'page' : null"
+          [attr.aria-label]="'Page 1'"
+        >
+          1
+        </button>
+        
+        <!-- Ellipsis if needed -->
+        <span class="page-ellipsis" *ngIf="currentPage > 4" aria-hidden="true">...</span>
+        
+        <!-- Pages before current -->
+        <ng-container *ngFor="let page of getPageRange()">
+          <button 
+            class="page-number"
+            [class.active]="currentPage === page"
+            (click)="onPageChange(page)"
+            [attr.aria-current]="currentPage === page ? 'page' : null"
+            [attr.aria-label]="'Page ' + page"
+          >
+            {{ page }}
+          </button>
+        </ng-container>
+        
+        <!-- Ellipsis if needed -->
+        <span class="page-ellipsis" *ngIf="currentPage < totalPages - 3" aria-hidden="true">...</span>
+        
+        <!-- Last Page -->
+        <button 
+          class="page-number"
+          [class.active]="currentPage === totalPages"
+          (click)="onPageChange(totalPages)"
+          [attr.aria-current]="currentPage === totalPages ? 'page' : null"
+          [attr.aria-label]="'Page ' + totalPages"
+          *ngIf="totalPages > 1 && currentPage !== totalPages"
+        >
+          {{ totalPages }}
+        </button>
+      </div>
+
+      <!-- Next Button -->
+      <button 
+        class="page-btn next-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+        [attr.aria-label]="'Next page'"
+      >
+        Next <span aria-hidden="true">&raquo;</span>
+      </button>
+      
+      <!-- Page Size Selector -->
+      <div class="page-size-selector">
+        <label for="pageSize">Show: </label>
+        <select 
+          id="pageSize" 
+          [(ngModel)]="pageSize" 
+          (change)="onPageSizeChange()" 
+          class="page-size-select"
+          aria-label="Results per page"
+        >
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && caseLaws.length === 0" class="empty-state">
+    <h3>No case laws found</h3>
+    <p>Try adjusting your search criteria or filters.</p>
+  </div>
+</div>

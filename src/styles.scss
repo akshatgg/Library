@@ -1,0 +1,33 @@
+/* Global styles */
+
+/* Reset browser default margins and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Remove outline on clicked elements for better UX while maintaining accessibility */
+*:focus-visible {
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+}
+
+/* Remove default list styling */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+/* Normalize headings */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}

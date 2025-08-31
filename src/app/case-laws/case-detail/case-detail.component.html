@@ -1,0 +1,178 @@
+<div class="case-detail-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading case details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <h2>Error</h2>
+    <p class="error-message">{{ error }}</p>
+    <div class="error-actions">
+      <button class="retry-btn" (click)="loadCaseDetail()">Retry</button>
+      <button class="back-btn" (click)="goBack()">Back to List</button>
+    </div>
+  </div>
+
+  <!-- Case Detail Content -->
+  <div *ngIf="!loading && !error && caseLaw" class="case-content">
+    <!-- Header -->
+    <div class="case-header">
+      <button class="back-button" (click)="goBack()">
+        ← Back to Case Laws
+      </button>
+      
+      <div class="case-title-section">
+        <h1 class="case-title">{{ caseLaw.title }}</h1>
+        <div class="case-meta">
+          <span class="meta-item">
+            <strong>TID:</strong> {{ caseLaw.tid }}
+          </span>
+          <span class="meta-item">
+            <strong>Published:</strong> {{ formatDate(caseLaw.publishdate) }}
+          </span>
+          <span class="meta-item">
+            <strong>Source:</strong> {{ caseLaw.docsource }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Information Grid -->
+    <div class="case-info-section">
+      <h2>Case Information</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Basic Details</h3>
+          <div class="info-list">
+            <div class="info-item">
+              <span class="label">Category:</span>
+              <span class="value">{{ caseLaw.category || 'Not specified' }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.bench">
+              <span class="label">Bench:</span>
+              <span class="value">{{ caseLaw.bench }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.taxSection">
+              <span class="label">Tax Section:</span>
+              <span class="value">{{ caseLaw.taxSection }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.authorid !== null && caseLaw.authorid !== undefined">
+              <span class="label">Author ID:</span>
+              <span class="value">{{ caseLaw.authorid }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.catids">
+              <span class="label">Category IDs:</span>
+              <span class="value">{{ caseLaw.catids }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Document Source:</span>
+              <span class="value">{{ caseLaw.docsource }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.headline">
+              <span class="label">Headline:</span>
+              <span class="value">{{ caseLaw.headline }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.fragment !== undefined && caseLaw.fragment !== null">
+              <span class="label">Fragment:</span>
+              <span class="value">{{ caseLaw.fragment ? 'Yes' : 'No' }}</span>
+            </div>
+            <div class="info-item" *ngIf="caseLaw.doctype">
+              <span class="label">Document Type:</span>
+              <span class="value">{{ caseLaw.doctype }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>Citation Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">{{ caseLaw.numcites }}</div>
+              <div class="stat-label">Citations</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ caseLaw.numcitedby }}</div>
+              <div class="stat-label">Cited By</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3>Document Statistics</h3>
+          <div class="info-list">
+            <div class="info-item" *ngIf="caseLaw.docsize">
+              <span class="label">Document Size:</span>
+              <span class="value">{{ caseLaw.docsize }} KB</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Creation Date:</span>
+              <span class="value">{{ formatDate(caseLaw.createdAt) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Last Updated:</span>
+              <span class="value">{{ formatDate(caseLaw.updatedAt) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" *ngIf="caseLaw.headline">
+          <h3>Summary</h3>
+          <p class="headline">{{ caseLaw.headline }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Detail Document -->
+    <div class="case-document-section" *ngIf="caseLaw.caseDetail">
+      <h2>Case Document</h2>
+      <div class="document-meta">
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>Document Type:</strong> {{ caseLaw.caseDetail.divtype || 'Not specified' }}
+          </div>
+          <div class="meta-item">
+            <strong>Court Copy:</strong> {{ caseLaw.caseDetail.courtcopy ? 'Yes' : 'No' }}
+          </div>
+          <div class="meta-item">
+            <strong>Agreement:</strong> {{ caseLaw.caseDetail.agreement ? 'Yes' : 'No' }}
+          </div>
+          <div class="meta-item" *ngIf="caseLaw.caseDetail.citetid">
+            <strong>Cite TID:</strong> {{ caseLaw.caseDetail.citetid }}
+          </div>
+        </div>
+      </div>
+
+      <div class="document-content">
+        <h3>Full Judgment</h3>
+        <div class="document-text" [innerHTML]="caseLaw.caseDetail.doc"></div>
+      </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="additional-info-section">
+      <h2>Additional Information</h2>
+      <div class="additional-grid">
+        <div class="additional-item" *ngIf="caseLaw.authorid">
+          <strong>Author ID:</strong> {{ caseLaw.authorid }}
+        </div>
+        <div class="additional-item" *ngIf="caseLaw.catids">
+          <strong>Category IDs:</strong> {{ caseLaw.catids }}
+        </div>
+        <div class="additional-item" *ngIf="caseLaw.docsize">
+          <strong>Document Size:</strong> {{ caseLaw.docsize }} bytes
+        </div>
+        <div class="additional-item">
+          <strong>Fragment:</strong> {{ caseLaw.fragment ? 'Yes' : 'No' }}
+        </div>
+        <div class="additional-item">
+          <strong>Created:</strong> {{ formatDate(caseLaw.createdAt.toString()) }}
+        </div>
+        <div class="additional-item">
+          <strong>Updated:</strong> {{ formatDate(caseLaw.updatedAt.toString()) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

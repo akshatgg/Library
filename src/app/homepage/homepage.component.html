@@ -1,0 +1,133 @@
+<div class="homepage-container">
+  <!-- Header Section -->
+
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h2 class="hero-title">Legal Knowledge <br>At Your Fingertips</h2>
+        <p class="hero-description">
+          Your comprehensive digital library for legal case laws, documents, and research materials.
+          Access thousands of case laws with advanced search and filtering capabilities.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" routerLink="/case-laws">
+            <i class="fas fa-search"></i> Browse Case Laws
+          </a>
+          <button class="btn btn-secondary" (click)="scrollToFeatures()">
+            <i class="fas fa-info-circle"></i> Learn More
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="title-container">
+        <h3 class="section-title">Key Features</h3>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <h4 class="feature-title">Extensive Case Law Database</h4>
+          <p class="feature-description">
+            Access thousands of legal case laws organized by categories and sections with regular updates.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h4 class="feature-title">Advanced Search</h4>
+          <p class="feature-description">
+            Search case laws by title, category, tax section, keywords, and other specialized criteria.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h4 class="feature-title">Detailed Case Information</h4>
+          <p class="feature-description">
+            View comprehensive case details including court information, judges, case outcomes, and citations.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h4 class="feature-title">Responsive Design</h4>
+          <p class="feature-description">
+            Access the library seamlessly from any device - desktop, tablet, or mobile with optimized experience.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Access Section -->
+  <section class="quick-access">
+    <div class="container">
+      <div class="title-container">
+        <h3 class="section-title">Browse Categories</h3>
+      </div>
+      <div class="quick-access-grid">
+        <a class="quick-access-card" routerLink="/case-laws">
+          <h4>Complete Collection</h4>
+          <p>Access our comprehensive case law library</p>
+          <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="quick-access-card" routerLink="/case-laws" [queryParams]="{category: 'CRIMINAL'}">
+          <h4>Criminal Cases</h4>
+          <p>Explore criminal law precedents and judgments</p>
+          <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="quick-access-card" routerLink="/case-laws" [queryParams]="{category: 'CIVIL'}">
+          <h4>Civil Cases</h4>
+          <p>Discover important civil law decisions</p>
+          <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="quick-access-card" routerLink="/case-laws" [queryParams]="{category: 'CONSTITUTIONAL'}">
+          <h4>Constitutional Cases</h4>
+          <p>Study landmark constitutional interpretations</p>
+          <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="title-container">
+        <h3 class="section-title">Library Statistics</h3>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">10,000+</div>
+          <div class="stat-label">Case Laws</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Access</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Reliability</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+
+</div>

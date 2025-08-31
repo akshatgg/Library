@@ -1,0 +1,11 @@
+.main-content {
+  min-height: calc(100vh - 170px); // 70px is navbar height, ~100px is footer height
+  padding-bottom: 0; // No padding needed as we have a footer
+}
+
+// Reset default body margins and padding
+:host {
+  display: block;
+  margin: 0;
+  padding: 0;
+}

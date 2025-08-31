@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  uid          String        @unique
+  email        String        @unique
+  displayName  String?
+  role         String        @default("user")
+  credits      Int           @default(0)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  lastLoggedin DateTime      @default(now()) @map("last_login")
+  isVerified   Boolean       @default(false) @map("is_verified")
+  isActive     Boolean       @default(false) @map("is_active")
+  password     String
+  otps         OTP[]
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model OTP {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  email     String
+  otp       String
+  type      String   @default("verification")
+  used      Boolean  @default(false)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([email])
+  @@map("otps")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  orderId     String   @map("order_id")
+  amount      Int
+  credits     Int
+  description String
+  status      String   @default("pending")
+  type        String   @default("purchase")
+  timestamp   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("transactions")
+}
+
+model CaseLaw {
+  id          String        @id @default(cuid())
+  tid         Int           @unique
+  authorid    Int?          @map("author_id")
+  bench       String?
+  catids      String?       @map("cat_ids")
+  docsize     Int?          @map("doc_size")
+  docsource   String        @map("doc_source")
+  doctype     Int?          @map("doc_type")
+  fragment    Boolean?      @default(false)
+  headline    String?
+  numcitedby  Int           @default(0) @map("num_cited_by")
+  numcites    Int           @default(0) @map("num_cites")
+  publishdate String        @map("publish_date")
+  title       String
+  category    CaseCategory?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  taxSection  TaxSection?   @map("TaxSection")
+  caseDetail  CaseDetail?
+
+  @@index([tid])
+  @@index([category])
+  @@index([publishdate])
+  @@index([docsource])
+  @@index([taxSection])
+  @@map("case_laws")
+}
+
+model CaseDetail {
+  id          String   @id @default(cuid())
+  tid         Int      @unique
+  agreement   Boolean  @default(false)
+  citetid     Int?     @map("cite_tid")
+  courtcopy   Boolean  @default(false) @map("court_copy")
+  divtype     String?  @map("div_type")
+  doc         String
+  docsource   String   @map("doc_source")
+  numcitedby  Int      @default(0) @map("num_cited_by")
+  numcites    Int      @default(0) @map("num_cites")
+  publishdate String   @map("publish_date")
+  queryAlert  Json?    @map("query_alert")
+  title       String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  caseLaw     CaseLaw  @relation(fields: [tid], references: [tid], onDelete: Cascade)
+
+  @@index([tid])
+  @@index([numcitedby])
+  @@index([docsource])
+  @@map("case_details")
+}
+
+enum CaseCategory {
+  ALL_CATEGORIES @map("all categories")
+  ITAT
+  GST
+  INCOME_TAX     @map("Income tax")
+  HIGH_COURT     @map("High Court")
+  SUPREME_COURT  @map("Supreme court")
+  TRIBUNAL_COURT @map("tribunal court")
+}
+
+enum TaxSection {
+  SECTION_7_GST      @map("section_7_gst")
+  SECTION_16_GST     @map("section_16_gst")
+  SECTION_17_GST     @map("section_17_gst")
+  SECTION_22_24_GST  @map("section_22_24_gst")
+  SECTION_31_GST     @map("section_31_gst")
+  SECTION_35_36_GST  @map("section_35_36_gst")
+  SECTION_37_39_GST  @map("section_37_39_gst")
+  SECTION_49_GST     @map("section_49_gst")
+  SECTION_54_GST     @map("section_54_gst")
+  SECTION_73_74_GST  @map("section_73_74_gst")
+  SECTION_122_GST    @map("section_122_gst")
+  SECTION_129_GST    @map("section_129_gst")
+  SECTION_140_GST    @map("section_140_gst")
+  SECTION_2_IT       @map("section_2_it")
+  SECTION_10_IT      @map("section_10_it")
+  SECTION_14_IT      @map("section_14_it")
+  SECTION_15_17_IT   @map("section_15_17_it")
+  SECTION_28_44_IT   @map("section_28_44_it")
+  SECTION_80C_80U_IT @map("section_80C_80U_it")
+  SECTION_139_IT     @map("section_139_it")
+  SECTION_143_IT     @map("section_143_it")
+  SECTION_147_IT     @map("section_147_it")
+  SECTION_194_206_IT @map("section_194_206_it")
+  SECTION_234_IT     @map("section_234_it")
+}
